@@ -53,12 +53,23 @@ class MovieView(Resource):
         return movie_schema.dump(movie), 200
 
     def put(self, movie_id):
-        db.session.query(models.Movie).filter(models.Movie.id == movie_id).first().update(**request.json)
+#        db.session.query(models.Movie).filter(models.Movie.id == movie_id).first().update(**request.json)
+        movie = db.session.query(models.Movie).get(movie_id)
+        movie.title = request.json["title"]
+        movie.description = request.json["description"]
+        movie.trailer = request.json["trailer"]
+        movie.year = request.json["year"]
+        movie.rating = request.json["rating"]
+        movie.genre_id = request.json["genre_id"]
+        movie.director_id = request.json["director_id"]
+        db.session.add(movie)
         db.session.commit()
         return {}, 201
 
     def delete(self, movie_id):
-        db.session.query(models.Movie).filter(models.Movie.id == movie_id).first().delete()
+#        db.session.query(models.Movie).filter(models.Movie.id == movie_id).first().delete()
+        movie = db.session.query(models.Movie).get(movie_id)
+        db.session.delete(movie)
         db.session.commit()
         return {}, 204
 
@@ -85,12 +96,15 @@ class DirectorView(Resource):
         return director_schema.dump(director), 200
 
     def put(self, director_id):
-        db.session.query(models.Director).filter(models.Director.id == director_id).first().update(**request.json)
+        director = db.session.query(models.Director).get(director_id)
+        director.name = request.json["name"]
+        db.session.add(director)
         db.session.commit()
         return {}, 201
 
     def delete(self, director_id):
-        db.session.query(models.Director).filter(models.Director.id == director_id).first().delete()
+        director = db.session.query(models.Director).get(director_id)
+        db.session.delete(director)
         db.session.commit()
         return {}, 204
 
@@ -118,11 +132,14 @@ class GenreView(Resource):
         return genre_schema.dump(genre), 200
 
     def put(self, genre_id):
-        db.session.query(models.Genre).filter(models.Genre.id == genre_id).first().update(**request.json)
+        genre = db.session.query(models.Genre).get(genre_id)
+        genre.name = request.json["genre"]
+        db.session.add(genre)
         db.session.commit()
         return {}, 201
 
     def delete(self, genre_id):
-        db.session.query(models.Genre).filter(models.Genre.id == genre_id).first().delete()
+        genre = db.session.query(models.Genre).get(genre_id)
+        db.session.delete(genre)
         db.session.commit()
         return {}, 204
